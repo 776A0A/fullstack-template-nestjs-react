@@ -4,6 +4,5 @@
 - node
 - pm2
 
-# ci.yml
 
-- 替换 `ci.yml` 中所有 `<project_name>` 为你的项目名
+- 全局替换 `<project_name>` 为你的项目名

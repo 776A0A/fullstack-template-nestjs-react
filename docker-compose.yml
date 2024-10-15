@@ -1,0 +1,14 @@
+services:
+  mysql:
+    image: mysql:8.4.2
+    container_name: <project_name>_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: <project_name>
+    ports:
+      - '3306:3306'
+    volumes:
+      - <project_name>_mysql_data:/var/lib/mysql
+
+volumes:
+  ai_questioning_mysql_data:
