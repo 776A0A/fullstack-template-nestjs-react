@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+
+      - name: Install dependencies for frontend
+        run: |
+          cd packages/client
+          pnpm install
+
+      - name: Build Frontend
+        run: |
+          cd packages/client
+          pnpm run build:ci
+
+      - name: Upload frontend build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: <project_name>-frontend-build-artifacts
+          path: packages/client/frontend-dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download frontend build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: <project_name>-frontend-build-artifacts
+          path: packages/client/frontend-dist
+
+      - name: Deploy backend server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "packages/server"
+          target: "/usr/local/src/<project_name>/backend-source"
+          strip_components: 2
+
+      - name: Deploy frontend dist
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "packages/client/frontend-dist"
+          target: "/usr/local/src/<project_name>"
+          strip_components: 2
+
+      - name: Deploy docker-compose.yml
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: "docker-compose.yml"
+          target: "/usr/local/src/<project_name>/"
+
+      - name: Execute remote commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /usr/local/src/<project_name>
+
+            # 部署前端
+            rm -rf frontend
+            mv frontend-dist frontend
+
+            # 安装后端依赖并启动应用
+            rm -rf backend
+            mv backend-source backend
+            rm -rf backend-source
+            cd backend
+            pnpm install
+            pnpm run build
+            cd ..
+            pm2 restart ecosystem.config.js
+
+            docker-compose up -d
