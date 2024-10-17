@@ -14,7 +14,7 @@
       "@/*": [
         "./src/*"
       ],
-      "@<project_name>/dto/*": [
+      "@__YOUR_PROJECT_NAME__/dto/*": [
         "../dto/src/*"
       ]
     }

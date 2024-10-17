@@ -1,5 +1,5 @@
 {
-  "name": "@<project_name>/dto",
+  "name": "@__YOUR_PROJECT_NAME__/dto",
   "version": "1.0.0",
   "description": "DTO",
   "main": "index.d.ts",
