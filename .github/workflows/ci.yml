@@ -39,7 +39,7 @@ jobs:
       - name: Upload frontend build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: <project_name>-frontend-build-artifacts
+          name: __YOUR_PROJECT_NAME__-frontend-build-artifacts
           path: packages/client/frontend-dist
 
   deploy:
@@ -52,7 +52,7 @@ jobs:
       - name: Download frontend build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: <project_name>-frontend-build-artifacts
+          name: __YOUR_PROJECT_NAME__-frontend-build-artifacts
           path: packages/client/frontend-dist
 
       - name: Deploy backend server
@@ -62,7 +62,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "packages/server"
-          target: "/usr/local/src/<project_name>/backend-source"
+          target: "/usr/local/src/__YOUR_PROJECT_NAME__/backend-source"
           strip_components: 2
 
       - name: Deploy frontend dist
@@ -72,7 +72,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "packages/client/frontend-dist"
-          target: "/usr/local/src/<project_name>"
+          target: "/usr/local/src/__YOUR_PROJECT_NAME__"
           strip_components: 2
 
       - name: Deploy docker-compose.yml
@@ -82,7 +82,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "docker-compose.yml"
-          target: "/usr/local/src/<project_name>/"
+          target: "/usr/local/src/__YOUR_PROJECT_NAME__/"
 
       - name: Execute remote commands
         uses: appleboy/ssh-action@v1.0.3
@@ -91,7 +91,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /usr/local/src/<project_name>
+            cd /usr/local/src/__YOUR_PROJECT_NAME__
 
             # 部署前端
             rm -rf frontend
