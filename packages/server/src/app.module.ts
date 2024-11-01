@@ -1,48 +1,35 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ArticleModule } from './article/article.module';
-import { Article } from './article/entities/article.entity';
 import { AuthModule } from './auth/auth.module';
 import { JwtMiddleware, UserCheckMiddleware } from './auth/middleware';
-import { Note } from './note/entities/note.entity';
-import { NoteModule } from './note/note.module';
-import { QuestionOption } from './question/entities/question-option.entity';
-import { Question } from './question/entities/question.entity';
-import { QuestionModule } from './question/question.module';
-import { Study } from './study/entities/study.entity';
-import { StudyModule } from './study/study.module';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '123456',
-      database: 'ai_questioning',
-      entities: [User, Study, Article, Note, Question, QuestionOption],
+      host: process.env.DATABASE_HOST,
+      port: parseInt(process.env.DATABASE_PORT || '3306', 10),
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      entities: [User],
       synchronize: true,
       timezone: 'Z',
     }),
     AuthModule,
     UserModule,
-    StudyModule,
-    ArticleModule,
-    QuestionModule,
-    NoteModule,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(JwtMiddleware)
-      .forRoutes('study', 'user', 'article', 'note', 'question');
+    const routes = ['study', 'user', 'article', 'note', 'question'];
 
-    consumer
-      .apply(UserCheckMiddleware)
-      .forRoutes('study', 'user', 'article', 'note', 'question');
+    consumer.apply(JwtMiddleware).forRoutes(...routes);
+
+    consumer.apply(UserCheckMiddleware).forRoutes(...routes);
   }
 }

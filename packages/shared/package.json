@@ -1,7 +1,7 @@
 {
-  "name": "@__YOUR_PROJECT_NAME__/dto",
+  "name": "@__YOUR_PROJECT_NAME__/shared",
   "version": "1.0.0",
-  "description": "DTO",
+  "description": "shared",
   "main": "index.d.ts",
   "types": "index.d.ts",
   "scripts": {
