@@ -11,4 +11,4 @@ services:
       - __YOUR_PROJECT_NAME___mysql_data:/var/lib/mysql
 
 volumes:
-  ai_questioning_mysql_data:
+  __YOUR_PROJECT_NAME___mysql_data:
