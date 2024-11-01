@@ -4,8 +4,6 @@ import { Repository } from 'typeorm';
 import { User } from '@/user/entities/user.entity';
 import * as jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 @Injectable()
 export class AuthService {
   constructor(
