@@ -32,7 +32,7 @@ function Login() {
 
   const { mutate: login, isPending } = useMutation({
     mutationFn: api.auth.login,
-    onSuccess: () => navigate('/study'),
+    onSuccess: () => navigate('/'),
     onError: (error) => {
       console.error('登录失败:', error);
       toast.error('登录失败，请检查用户名和密码');

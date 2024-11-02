@@ -17,13 +17,13 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
-          path="/study"
+          path="/"
           element={<ProtectedRoute>{/* <Home /> */}</ProtectedRoute>}
         />
-        <Route
-          path="/study/:studyId"
+        {/* <Route
+          path="/:id"
           element={<ProtectedRoute>{/* <Home /> */}</ProtectedRoute>}
-        />
+        /> */}
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
