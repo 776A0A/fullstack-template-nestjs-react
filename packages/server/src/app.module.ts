@@ -1,10 +1,12 @@
+import { UserEntity } from '@/domain/user';
+import {
+  JwtMiddleware,
+  UserCheckMiddleware,
+} from '@/application/user/middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { JwtMiddleware, UserCheckMiddleware } from './auth/middleware';
-import { User } from './user/entities/user.entity';
-import { UserModule } from './user/user.module';
+import { UserModule } from './user.module';
 
 @Module({
   imports: [
@@ -12,21 +14,20 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT || '3306', 10),
+      port: +process.env.DATABASE_PORT!,
       username: process.env.DATABASE_USERNAME,
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_NAME,
-      entities: [User],
+      entities: [UserEntity],
       synchronize: true,
       timezone: 'Z',
     }),
-    AuthModule,
     UserModule,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    const routes = ['study', 'user', 'article', 'note', 'question'];
+    const routes: string[] = [];
 
     consumer.apply(JwtMiddleware).forRoutes(...routes);
 
