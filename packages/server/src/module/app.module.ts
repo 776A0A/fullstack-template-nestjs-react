@@ -2,6 +2,7 @@ import {
   JwtMiddleware,
   UserCheckMiddleware,
 } from '@/application/user/middleware';
+import { LoggerMiddleware } from '@/common/middleware';
 import { UserEntity } from '@/domain/user';
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -35,7 +36,10 @@ const {
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     const routes: string[] = [];
-
-    consumer.apply(JwtMiddleware, UserCheckMiddleware).forRoutes(...routes);
+    consumer
+      .apply(JwtMiddleware, UserCheckMiddleware)
+      .forRoutes(...routes)
+      .apply(LoggerMiddleware)
+      .forRoutes('*');
   }
 }

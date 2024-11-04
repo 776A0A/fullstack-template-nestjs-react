@@ -1,26 +1,36 @@
 import { pid } from 'process';
-import { createLogger, format, transports } from 'winston';
+import { createLogger, format, transports, type LoggerOptions } from 'winston';
 import 'winston-daily-rotate-file';
 import { day } from './utils';
 
-const customFormat = format.printf(({ timestamp, level, stack, message }) => {
-  return `(${pid}) ${timestamp} - [${level}] - ${stack || message}`;
-});
+const customFormat = format.printf(
+  ({ timestamp, level, stack, message, context }) => {
+    return `(${pid}) ${timestamp} - [${level}] [${context}] - ${stack || message}`;
+  },
+);
 
-const formatTime = () => day().format('YYYY-MM-DD HH:mm:ss.SSS');
+const formatTime = () =>
+  day().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss.SSS');
 
 const basicFormat = format.combine(
   format.timestamp({ format: formatTime }),
   format.errors({ stack: true }),
 );
 
-const devLogger = {
+const devLogger: LoggerOptions = {
   format: format.combine(
     format.colorize({ level: true }),
     basicFormat,
     customFormat,
   ),
-  transports: [new transports.Console({ level: 'silly' })],
+  exitOnError: false,
+  transports: [
+    new transports.Console({
+      level: 'silly',
+      handleExceptions: true,
+      handleRejections: true,
+    }),
+  ],
 };
 
 const dailyRotateOptions = {
@@ -29,8 +39,9 @@ const dailyRotateOptions = {
   maxFiles: '15d',
 };
 
-const prodLogger = {
+const prodLogger: LoggerOptions = {
   format: format.combine(basicFormat, format.json()),
+  exitOnError: false,
   transports: [
     new transports.DailyRotateFile({
       level: 'info',
@@ -40,6 +51,8 @@ const prodLogger = {
     new transports.DailyRotateFile({
       level: 'error',
       filename: 'logs/%DATE%-error.log',
+      handleExceptions: true,
+      handleRejections: true,
       ...dailyRotateOptions,
     }),
   ],

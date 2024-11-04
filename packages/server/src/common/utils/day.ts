@@ -10,5 +10,5 @@ dayjs.tz.setDefault('Asia/Shanghai');
 export const day = dayjs;
 
 export function standardTimeFormat(time?: Date) {
-  return day(time).format('YYYY-MM-DD HH:mm:ss');
+  return day(time).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss');
 }

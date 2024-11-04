@@ -14,10 +14,16 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      lodash.size:
+        specifier: ^4.2.0
+        version: 4.2.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.9.0
         version: 9.12.0
+      '@types/lodash.size':
+        specifier: ^4.2.9
+        version: 4.2.9
       '@types/node':
         specifier: ^20.11.16
         version: 20.16.12
@@ -1862,6 +1868,9 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
+  '@types/lodash.size@4.2.9':
+    resolution: {integrity: sha512-Biwy2iatGelFB7lWzyrOjUKnbSZMgOZfT2zHhq9HjJDoPZiRGJqwk1TsCG33wLEWs7+YbzyaAyOQw4NddtwyOQ==}
+
   '@types/lodash.throttle@4.1.9':
     resolution: {integrity: sha512-PCPVfpfueguWZQB7pJQK890F2scYKoDUL3iM522AptHWn7d5NQmeS/LTEHIcLr5PaTzl3dK2Z0xSUHHTHwaL5g==}
 
@@ -3674,6 +3683,9 @@ packages:
 
   lodash.once@4.1.1:
     resolution: {integrity: sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg==}
+
+  lodash.size@4.2.0:
+    resolution: {integrity: sha512-wbu3SF1XC5ijqm0piNxw59yCbuUf2kaShumYBLWUrcCvwh6C8odz6SY/wGVzCWTQTFL/1Ygbvqg2eLtspUVVAQ==}
 
   lodash.throttle@4.1.1:
     resolution: {integrity: sha512-wIkUCfVKpVsWo3JSZlc+8MB5it+2AN5W8J7YVMST30UrvcQNZ1Okbj+rbVniijTWE6FGYy4XJq/rHkas8qJMLQ==}
@@ -7034,6 +7046,10 @@ snapshots:
 
   '@types/linkify-it@5.0.0': {}
 
+  '@types/lodash.size@4.2.9':
+    dependencies:
+      '@types/lodash': 4.17.10
+
   '@types/lodash.throttle@4.1.9':
     dependencies:
       '@types/lodash': 4.17.10
@@ -9202,6 +9218,8 @@ snapshots:
   lodash.merge@4.6.2: {}
 
   lodash.once@4.1.1: {}
+
+  lodash.size@4.2.0: {}
 
   lodash.throttle@4.1.1: {}
 
