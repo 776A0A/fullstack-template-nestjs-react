@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "React Client",
+  "description": "yourprojectname Client",
   "scripts": {
     "dev": "vite --host",
     "build": "tsc -b && vite build",

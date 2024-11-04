@@ -1,23 +1,29 @@
-import { UserEntity } from '@/domain/user';
 import {
   JwtMiddleware,
   UserCheckMiddleware,
 } from '@/application/user/middleware';
+import { UserEntity } from '@/domain/user';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user.module';
 
+const {
+  DATABASE_HOST,
+  DATABASE_PORT,
+  DATABASE_USERNAME,
+  DATABASE_PASSWORD,
+  DATABASE_NAME,
+} = process.env;
+
 @Module({
   imports: [
-    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DATABASE_HOST,
-      port: +process.env.DATABASE_PORT!,
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_NAME,
+      host: DATABASE_HOST,
+      port: +DATABASE_PORT!,
+      username: DATABASE_USERNAME,
+      password: DATABASE_PASSWORD,
+      database: DATABASE_NAME,
       entities: [UserEntity],
       synchronize: true,
       timezone: 'Z',
@@ -29,8 +35,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     const routes: string[] = [];
 
-    consumer.apply(JwtMiddleware).forRoutes(...routes);
-
-    consumer.apply(UserCheckMiddleware).forRoutes(...routes);
+    consumer.apply(JwtMiddleware, UserCheckMiddleware).forRoutes(...routes);
   }
 }

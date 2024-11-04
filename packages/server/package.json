@@ -2,8 +2,7 @@
   "name": "@yourprojectname/server",
   "private": true,
   "version": "1.0.0",
-  "description": "Nest Server",
-  "license": "MIT",
+  "description": "yourprojectname Server",
   "scripts": {
     "build": "nest build",
     "build:ci": "nest build",
