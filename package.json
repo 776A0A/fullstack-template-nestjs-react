@@ -19,6 +19,7 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.21.1"
+    "@dotenvx/dotenvx": "^1.21.1",
+    "dayjs": "^1.11.13"
   }
 }

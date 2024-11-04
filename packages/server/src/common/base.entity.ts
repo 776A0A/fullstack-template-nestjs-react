@@ -1,5 +1,5 @@
 import { AfterLoad, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { formatTime } from './utils';
+import { standardTimeFormat } from './utils';
 
 export abstract class BaseEntity {
   @CreateDateColumn({
@@ -27,10 +27,10 @@ export abstract class BaseEntity {
   @AfterLoad()
   convertDatesToBeijingTime() {
     if (this.createdAt) {
-      this.createdAt = formatTime(this.createdAt) as any;
+      this.createdAt = standardTimeFormat(this.createdAt) as any;
     }
     if (this.lastUpdatedAt) {
-      this.lastUpdatedAt = formatTime(this.lastUpdatedAt) as any;
+      this.lastUpdatedAt = standardTimeFormat(this.lastUpdatedAt) as any;
     }
   }
 }
