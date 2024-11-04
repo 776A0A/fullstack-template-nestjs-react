@@ -1,5 +1,5 @@
 {
-  "name": "@__YOUR_PROJECT_NAME__/server",
+  "name": "@yourprojectname/server",
   "private": true,
   "version": "1.0.0",
   "description": "Nest Server",

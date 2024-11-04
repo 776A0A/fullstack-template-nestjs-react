@@ -1,14 +1,14 @@
 services:
   mysql:
     image: mysql:8.4.2
-    container_name: __YOUR_PROJECT_NAME___mysql
+    container_name: yourprojectname_mysql
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: __YOUR_PROJECT_NAME__
+      MYSQL_DATABASE: yourprojectname
     ports:
       - '3306:3306'
     volumes:
-      - __YOUR_PROJECT_NAME___mysql_data:/var/lib/mysql
+      - yourprojectname_mysql_data:/var/lib/mysql
 
 volumes:
-  __YOUR_PROJECT_NAME___mysql_data:
+  yourprojectname_mysql_data:

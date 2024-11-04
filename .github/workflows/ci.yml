@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - name: Install dependencies for frontend
         run: |
@@ -39,7 +39,7 @@ jobs:
       - name: Upload frontend build artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: __YOUR_PROJECT_NAME__-frontend-build-artifacts
+          name: yourprojectname-frontend-build-artifacts
           path: packages/client/frontend-dist
 
   deploy:
@@ -52,7 +52,7 @@ jobs:
       - name: Download frontend build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: __YOUR_PROJECT_NAME__-frontend-build-artifacts
+          name: yourprojectname-frontend-build-artifacts
           path: packages/client/frontend-dist
 
       - name: Deploy backend server
@@ -61,8 +61,8 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "packages/server"
-          target: "/usr/local/src/__YOUR_PROJECT_NAME__/backend-source"
+          source: 'packages/server'
+          target: '/usr/local/src/yourprojectname/backend-source'
           strip_components: 2
 
       - name: Deploy frontend dist
@@ -71,8 +71,8 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "packages/client/frontend-dist"
-          target: "/usr/local/src/__YOUR_PROJECT_NAME__"
+          source: 'packages/client/frontend-dist'
+          target: '/usr/local/src/yourprojectname'
           strip_components: 2
 
       - name: Deploy docker-compose.yml
@@ -81,8 +81,8 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "docker-compose.yml"
-          target: "/usr/local/src/__YOUR_PROJECT_NAME__/"
+          source: 'docker-compose.yml'
+          target: '/usr/local/src/yourprojectname/'
 
       - name: Execute remote commands
         uses: appleboy/ssh-action@v1.0.3
@@ -91,7 +91,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /usr/local/src/__YOUR_PROJECT_NAME__
+            cd /usr/local/src/yourprojectname
 
             # 部署前端
             rm -rf frontend

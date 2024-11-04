@@ -1,5 +1,5 @@
 {
-  "name": "@__YOUR_PROJECT_NAME__/shared",
+  "name": "@yourprojectname/shared",
   "version": "1.0.0",
   "description": "shared",
   "main": "index.d.ts",

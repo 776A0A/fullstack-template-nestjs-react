@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { AppModule } from './module';
 
 // TODO: 用户只能修改自己的数据
 // TODO: logging
@@ -20,9 +20,8 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('__YOUR_PROJECT_NAME__')
+    .setTitle('yourprojectname')
     .setVersion('1.0')
-    .addTag('__YOUR_PROJECT_NAME__')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
