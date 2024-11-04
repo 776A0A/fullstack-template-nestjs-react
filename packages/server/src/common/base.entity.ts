@@ -1,5 +1,5 @@
-import * as moment from 'moment-timezone';
 import { AfterLoad, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { formatTime } from './utils';
 
 export abstract class BaseEntity {
   @CreateDateColumn({
@@ -27,16 +27,10 @@ export abstract class BaseEntity {
   @AfterLoad()
   convertDatesToBeijingTime() {
     if (this.createdAt) {
-      this.createdAt = this.formatAndSetTimezone(this.createdAt);
+      this.createdAt = formatTime(this.createdAt) as any;
     }
     if (this.lastUpdatedAt) {
-      this.lastUpdatedAt = this.formatAndSetTimezone(this.lastUpdatedAt);
+      this.lastUpdatedAt = formatTime(this.lastUpdatedAt) as any;
     }
-  }
-
-  private formatAndSetTimezone(time: Date) {
-    return moment(time)
-      .tz('Asia/Shanghai')
-      .format('YYYY-MM-DD HH:mm:ss') as any;
   }
 }
