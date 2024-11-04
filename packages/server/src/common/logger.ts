@@ -16,7 +16,7 @@ const basicFormat = format.combine(
 
 const devLogger = {
   format: format.combine(
-    format.colorize({ all: true }),
+    format.colorize({ level: true }),
     basicFormat,
     customFormat,
   ),
