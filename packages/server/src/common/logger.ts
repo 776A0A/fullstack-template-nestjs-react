@@ -9,11 +9,15 @@ const customFormat = format.printf(({ timestamp, level, stack, message }) => {
 
 const formatTime = () => day().format('YYYY-MM-DD HH:mm:ss.SSS');
 
+const basicFormat = format.combine(
+  format.timestamp({ format: formatTime }),
+  format.errors({ stack: true }),
+);
+
 const devLogger = {
   format: format.combine(
     format.colorize({ all: true }),
-    format.timestamp({ format: formatTime }),
-    format.errors({ stack: true }),
+    basicFormat,
     customFormat,
   ),
   transports: [new transports.Console({ level: 'silly' })],
@@ -26,11 +30,7 @@ const dailyRotateOptions = {
 };
 
 const prodLogger = {
-  format: format.combine(
-    format.timestamp({ format: formatTime }),
-    format.errors({ stack: true }),
-    format.json(),
-  ),
+  format: format.combine(basicFormat, format.json()),
   transports: [
     new transports.DailyRotateFile({
       level: 'info',
