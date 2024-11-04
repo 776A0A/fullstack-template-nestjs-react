@@ -1,10 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { token } from './token';
 
-const API_URL =
-  process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:9823/api';
-
-const axiosInstance = axios.create({ baseURL: API_URL });
+const axiosInstance = axios.create({ baseURL: '/api' });
 
 axiosInstance.interceptors.request.use(addAuthorization);
 
@@ -22,7 +19,7 @@ const createMethod = (method: string) => {
         ...config,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('请求错误:', error);
       if (error.response.status === 401) {
         token.remove();

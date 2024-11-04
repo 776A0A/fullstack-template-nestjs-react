@@ -8,19 +8,14 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: {
-    outDir: 'frontend-dist',
-  },
+  build: { outDir: 'frontend-dist' },
+  resolve: { alias: { '@': path.resolve(__dirname, './src') } },
+  server: { proxy: { '/api': 'http://localhost:9823' } },
   plugins: [
     tsconfigPaths(),
     react(),
     Icons({ autoInstall: true, compiler: 'jsx', jsx: 'react' }),
   ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
-  },
   test: {
     globals: false,
     environment: 'jsdom',
