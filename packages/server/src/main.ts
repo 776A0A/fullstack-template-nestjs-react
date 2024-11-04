@@ -1,6 +1,7 @@
-import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { WinstonModule } from 'nest-winston';
+import { logger } from './common';
 import { AppModule } from './module';
 
 // TODO: 用户只能修改自己的数据
@@ -10,11 +11,11 @@ import { AppModule } from './module';
 async function bootstrap() {
   process.env.TZ = 'UTC';
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger({ instance: logger }),
+  });
 
-  app.setGlobalPrefix('api');
-
-  app.enableCors({
+  app.setGlobalPrefix('api').enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
@@ -29,7 +30,9 @@ async function bootstrap() {
 
   await app.listen(process.env.SERVER_PORT!);
 
-  Logger.log(`Application is running on: ${await app.getUrl()}`, 'Bootstrap');
+  logger.info(`Application is running on: ${await app.getUrl()}`, {
+    context: 'Bootstrap',
+  });
 }
 
 bootstrap();

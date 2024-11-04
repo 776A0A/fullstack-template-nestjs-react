@@ -3,7 +3,7 @@ import {
   UserCheckMiddleware,
 } from '@/application/user/middleware';
 import { UserEntity } from '@/domain/user';
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user.module';
 
@@ -30,6 +30,7 @@ const {
     }),
     UserModule,
   ],
+  providers: [Logger],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
