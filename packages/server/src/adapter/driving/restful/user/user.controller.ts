@@ -5,6 +5,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   Patch,
@@ -15,6 +16,7 @@ import {
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @HttpCode(HttpStatus.CREATED)
   @Post('register')
   async register(@Body() body: { username: string; password: string }) {
     try {
@@ -31,6 +33,7 @@ export class UserController {
     }
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() body: { username: string; password: string }) {
     try {
