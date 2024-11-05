@@ -41,6 +41,10 @@ class HttpResponse<T = null> {
   public static of<T = null>(params: HttpResponseParams<T> = {}) {
     return new HttpResponse<T>(params);
   }
+
+  toJSON() {
+    return { code: this.code, message: this.message, data: this.data };
+  }
 }
 
 export { HttpResponse };
