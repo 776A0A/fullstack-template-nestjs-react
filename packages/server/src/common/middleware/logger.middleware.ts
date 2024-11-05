@@ -15,9 +15,9 @@ export class LoggerMiddleware implements NestMiddleware {
     );
 
     if (size(body)) {
-      if (body.password) body.password = '******';
+      const hasPassword = !!body.password;
       this.logger.log(
-        `Request body: ${JSON.stringify(body)}`,
+        `Request body: ${JSON.stringify({ ...body, ...(hasPassword ? { password: '*****' } : {}) })}`,
         LoggerMiddleware.name,
       );
     }
@@ -27,11 +27,6 @@ export class LoggerMiddleware implements NestMiddleware {
         LoggerMiddleware.name,
       );
     }
-
-    req.once('close', () => {
-      const { statusCode } = res;
-      this.logger.log(`Response: ${statusCode}`, LoggerMiddleware.name);
-    });
 
     next();
   }
