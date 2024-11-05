@@ -1,4 +1,10 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  NestMiddleware,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../user.service';
 
@@ -8,16 +14,21 @@ export class UserCheckMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     const userId = (req as any).user?.userId;
-    if (!userId) return this.invalidUser(res);
+    if (!userId) {
+      throw new UnauthorizedException({
+        code: HttpStatus.UNAUTHORIZED,
+        message: '用户未登录',
+      });
+    }
 
     const user = await this.userService.findOne(userId);
-    if (!user) return this.invalidUser(res);
+    if (!user) {
+      throw new NotFoundException({
+        code: HttpStatus.NOT_FOUND,
+        message: '用户不存在',
+      });
+    }
 
     next();
-  }
-
-  private invalidUser(res: Response<any, Record<string, any>>) {
-    res.status(401).json({ message: '用户未登录' });
-    return;
   }
 }

@@ -1,10 +1,11 @@
 import {
+  HttpStatus,
   Injectable,
   NestMiddleware,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {
@@ -19,8 +20,11 @@ export class JwtMiddleware implements NestMiddleware {
           secret: process.env.JWT_SECRET,
         });
         (req as any).user = payload;
-      } catch (error) {
-        throw new UnauthorizedException('无效的令牌');
+      } catch {
+        throw new UnauthorizedException({
+          code: HttpStatus.UNAUTHORIZED,
+          message: '无效的令牌',
+        });
       }
     }
     next();

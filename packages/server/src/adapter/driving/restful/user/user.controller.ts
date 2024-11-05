@@ -1,10 +1,10 @@
 import { UpdateUserDto, UserService } from '@/application/user';
 import { HttpResponse } from '@/common';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
-  HttpException,
   HttpStatus,
   Param,
   Patch,
@@ -24,7 +24,10 @@ export class UserController {
       });
       return HttpResponse.success();
     } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(
+        { message: error.message, code: HttpStatus.BAD_REQUEST },
+        { cause: error },
+      );
     }
   }
 
@@ -37,7 +40,10 @@ export class UserController {
       });
       return HttpResponse.success({ token });
     } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(
+        { message: error.message, code: HttpStatus.BAD_REQUEST },
+        { cause: error },
+      );
     }
   }
 
