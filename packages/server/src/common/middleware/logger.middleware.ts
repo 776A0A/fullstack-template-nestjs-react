@@ -15,6 +15,8 @@ export class LoggerMiddleware implements NestMiddleware {
     const { method, originalUrl, body, query, ip } = req;
     const requestPrefix = `Request [${pc.cyan(`${requestId}`)}]:`;
 
+    const requestPrefix = pc.cyan(`Request`);
+
     this.logger.log(
       `${requestPrefix} ${method} ${originalUrl} ${ip}`,
       LoggerMiddleware.name,

@@ -5,6 +5,7 @@ import {
   UserService,
 } from '@/application/user';
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
