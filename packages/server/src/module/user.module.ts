@@ -1,6 +1,9 @@
+import {
+  UserEntity,
+  UserRepositoryImpl,
+} from '@/adapter/driven/persistence/user';
 import { UserController } from '@/adapter/driving/restful/user';
 import { UserService } from '@/application/user';
-import { UserEntity } from '@/domain/user';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -17,7 +20,10 @@ const { JWT_SECRET, JWT_EXPIRES_IN } = process.env;
       signOptions: { expiresIn: JWT_EXPIRES_IN },
     }),
   ],
-  providers: [UserService],
+  providers: [
+    UserService,
+    { provide: 'UserRepository', useClass: UserRepositoryImpl },
+  ],
   controllers: [UserController],
   exports: [UserService, TypeOrmModule, JwtModule],
 })

@@ -1,14 +1,14 @@
 services:
   mysql:
     image: mysql:8.4.2
-    container_name: yourprojectname_mysql
+    container_name: oxygen_admin_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: yourprojectname
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-123456}
+      MYSQL_DATABASE: ${DB_NAME:-oxygen_admin}
     ports:
-      - '3306:3306'
+      - '${DB_PORT:-3307}:3306'
     volumes:
-      - yourprojectname_mysql_data:/var/lib/mysql
+      - oxygen_admin_mysql_data:/var/lib/mysql
 
 volumes:
-  yourprojectname_mysql_data:
+  oxygen_admin_mysql_data:

@@ -1,19 +1,36 @@
+import { logger } from '@/common/framework';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WinstonModule } from 'nest-winston';
-import { logger } from './common';
 import { AppModule } from './module';
 
-// TODO: 用户只能修改自己的数据
-// TODO: logging
-// TODO: 优化dto
+// TODO: 添加一个自动连接comfy的接口
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   process.env.TZ = 'UTC';
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger({ instance: logger }),
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: process.env.NODE_ENV !== 'production',
+      transform: true,
+      exceptionFactory: (errors): BadRequestException => {
+        const message = errors
+          .map(
+            (error) =>
+              `${error.property} - ${Object.values(error.constraints!).join(', ')}`,
+          )
+          .join('\n');
+
+        return new BadRequestException(message);
+      },
+    }),
+  );
 
   app.setGlobalPrefix('api').enableCors({
     origin: '*',
@@ -22,11 +39,19 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('yourprojectname')
+    .setTitle('LR API 文档')
+    .setDescription('LR 项目的 API 文档')
     .setVersion('1.0')
+    .addTag('用户管理')
+    .addTag('项目管理')
+    .addTag('故事管理')
+    .addTag('分镜管理')
+    .addTag('提示词管理')
+    .addTag('基础数据管理')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/v1/docs', app, document);
 
   await app.listen(process.env.SERVER_PORT!);
 

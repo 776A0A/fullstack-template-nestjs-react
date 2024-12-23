@@ -4,6 +4,8 @@ declare global {
     style?: React.CSSProperties;
     children?: React.ReactNode;
   }
+
+  type Nullable<T> = T | null | undefined;
 }
 
 export {};

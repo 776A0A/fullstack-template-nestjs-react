@@ -1,13 +1,14 @@
 {
-  "name": "@yourprojectname/shared",
+  "name": "@oxygen-admin/shared",
   "version": "1.0.0",
   "description": "shared",
-  "main": "index.d.ts",
-  "types": "index.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "src/index.ts",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dto": "./src/dto/index.ts",
+    "./dto/v2": "./src/dto/v2/index.ts"
+  }
 }

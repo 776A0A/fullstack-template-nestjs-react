@@ -1,45 +1,53 @@
+import { TagEntity } from '@/adapter/driven/persistence/project';
 import {
-  JwtMiddleware,
-  UserCheckMiddleware,
-} from '@/application/user/middleware';
+  ProjectEntity,
+  ProjectTagEntity,
+} from '@/adapter/driven/persistence/project/project';
+import { UserEntity } from '@/adapter/driven/persistence/user';
+import { JwtMiddleware, UserValidatorMiddleware } from '@/application/user';
+import { AllExceptionsFilter } from '@/common/filter';
 import { LoggerMiddleware } from '@/common/middleware';
-import { UserEntity } from '@/domain/user';
 import { Logger, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProjectModule } from './project.module';
 import { UserModule } from './user.module';
 
-const {
-  DATABASE_HOST,
-  DATABASE_PORT,
-  DATABASE_USERNAME,
-  DATABASE_PASSWORD,
-  DATABASE_NAME,
-} = process.env;
+const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } = process.env;
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: DATABASE_HOST,
-      port: +DATABASE_PORT!,
-      username: DATABASE_USERNAME,
-      password: DATABASE_PASSWORD,
-      database: DATABASE_NAME,
-      entities: [UserEntity],
+      host: DB_HOST,
+      port: +DB_PORT!,
+      username: DB_USERNAME,
+      password: DB_PASSWORD,
+      database: DB_NAME,
+      entities: [UserEntity, ProjectEntity, ProjectTagEntity, TagEntity],
       synchronize: true,
       timezone: 'Z',
+      logging: ['error'],
     }),
     UserModule,
+    ProjectModule,
   ],
-  providers: [Logger],
+  providers: [
+    Logger,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    const routes: string[] = [];
+  configure(consumer: MiddlewareConsumer): void {
+    const routes: string[] = ['v1/projects', 'v1/tags'];
+
     consumer
-      .apply(JwtMiddleware, UserCheckMiddleware)
-      .forRoutes(...routes)
       .apply(LoggerMiddleware)
-      .forRoutes('*');
+      .forRoutes('*')
+      .apply(JwtMiddleware, UserValidatorMiddleware)
+      .forRoutes(...routes);
   }
 }

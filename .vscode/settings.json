@@ -1,9 +1,21 @@
 {
     "cSpell.words": [
         "clsx",
+        "comfyui",
+        "crystools",
+        "darenome",
         "hookform",
+        "lexiles",
+        "presigner",
         "sonner",
         "tanstack",
+        "tseslint",
         "usehooks"
-    ]
+    ],
+    "material-icon-theme.activeIconPack": "nest",
+    "material-icon-theme.folders.associations": {},
+    "material-icon-theme.files.associations": {
+        "*.builder.ts": "Angular-service",
+        "*.factory.ts": "Angular-service"
+    }
 }

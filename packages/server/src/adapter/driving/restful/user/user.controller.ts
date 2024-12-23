@@ -1,53 +1,55 @@
-import { UpdateUserDto, UserService } from '@/application/user';
-import { HttpResponse } from '@/common';
+import {
+  CreateUserRequest,
+  UpdateUserRequest,
+  UserResponse,
+  UserService,
+} from '@/application/user';
 import {
   Body,
   Controller,
   Get,
-  HttpException,
+  HttpCode,
   HttpStatus,
   Param,
-  Patch,
   Post,
+  Put,
 } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@Controller('v1/user')
+@ApiTags('用户')
+@Controller('v2/users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly service: UserService) {}
 
-  @Post('register')
-  async register(@Body() body: { username: string; password: string }) {
-    try {
-      await this.userService.register({
-        username: body.username,
-        password: body.password,
-      });
-      return HttpResponse.success();
-    } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+  @Post()
+  @ApiOperation({ summary: '创建用户' })
+  @HttpCode(HttpStatus.CREATED)
+  async createUser(@Body() req: CreateUserRequest): Promise<void> {
+    await this.service.createUser(req);
   }
 
-  @Post('login')
-  async login(@Body() body: { username: string; password: string }) {
-    try {
-      const token = await this.userService.login({
-        username: body.username,
-        password: body.password,
-      });
-      return HttpResponse.success({ token });
-    } catch (error: any) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+  @Put(':userId')
+  @ApiOperation({ summary: '更新用户' })
+  @ApiParam({ name: 'userId' })
+  async updateUser(
+    @Param('userId') userId: string,
+    @Body() req: UpdateUserRequest,
+  ): Promise<void> {
+    await this.service.updateUser(userId, req);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(id);
+  @Get(':userId')
+  @ApiOperation({ summary: '获取用户详情' })
+  @ApiParam({ name: 'userId' })
+  @ApiResponse({ status: HttpStatus.OK, type: UserResponse })
+  async getUser(@Param('userId') userId: string): Promise<UserResponse> {
+    return await this.service.getUser(userId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @Get()
+  @ApiOperation({ summary: '获取用户列表' })
+  @ApiResponse({ status: HttpStatus.OK, type: [UserResponse] })
+  async getUserList(): Promise<UserResponse[]> {
+    return await this.service.getUserList();
   }
 }

@@ -1,0 +1,112 @@
+import { SigninRequestSchema, userApi } from '@/api/user';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  Input,
+} from '@/common/components/ui';
+import { useUserStore } from '@/store';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import * as z from 'zod';
+
+type SigninRequest = typeof SigninRequestSchema;
+
+function Signin() {
+  const navigate = useNavigate();
+
+  const form = useForm<z.infer<SigninRequest>>({
+    resolver: zodResolver(SigninRequestSchema),
+    defaultValues: { username: '', password: '' },
+  });
+
+  const { mutate: signin, isPending } = useMutation({
+    mutationFn: userApi.signin,
+    onSuccess: ({ userId, token }) => {
+      const userState = useUserStore.getState();
+      userState.setUser({ id: userId });
+      userState.setToken(token);
+
+      // TODO: 优化路由跳转，不要使用字符串导航，容易出错
+      navigate('/projects');
+    },
+  });
+
+  const onSubmit = (values: z.infer<SigninRequest>) => signin(values);
+
+  return (
+    <div className="flex items-center justify-center min-h-dvh bg-gradient-to-r from-blue-500 to-purple-600 dark:bg-gradient-to-r dark:from-indigo-900 dark:to-purple-800 p-4 sm:p-6">
+      <Card className="w-full max-w-md sm:max-w-sm p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold text-center text-gray-800 dark:text-gray-200 sm:text-2xl">
+            登录
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-semibold text-gray-700 dark:text-gray-300 sm:text-base">
+                      用户名
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="请输入用户名"
+                        {...field}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 sm:px-3 sm:py-1.5"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-sm text-red-600" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-semibold text-gray-700 dark:text-gray-300 sm:text-base">
+                      密码
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="请输入密码"
+                        {...field}
+                        className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 sm:px-3 sm:py-1.5"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-sm text-red-600" />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                className="w-full py-2 text-lg font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 sm:py-1.5 sm:text-base"
+                disabled={isPending}
+              >
+                {isPending ? '登录中...' : '登录'}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default Signin;

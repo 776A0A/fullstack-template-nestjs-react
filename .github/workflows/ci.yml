@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20]
+        node-version: [20.10.0]
 
     steps:
       - uses: actions/checkout@v4
@@ -26,63 +26,48 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: Install dependencies for frontend
-        run: |
-          cd packages/client
-          pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-      - name: Build Frontend
-        run: |
-          cd packages/client
-          pnpm run build:ci
+      - name: Build packages
+        run: pnpm -r run build
 
-      - name: Upload frontend build artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: yourprojectname-frontend-build-artifacts
-          path: packages/client/frontend-dist
+          name: oxygen-admin-dist
+          path: |
+            packages/client/dist
+            packages/server/dist
+            packages/server/nest-cli.json
+            packages/server/package.json
+            packages/shared
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            package.json
+            docker-compose.yml
+            ecosystem.config.js
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Download frontend build artifacts
+      - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          name: yourprojectname-frontend-build-artifacts
-          path: packages/client/frontend-dist
+          name: oxygen-admin-dist
+          path: dist-package
 
-      - name: Deploy backend server
+      - name: Deploy to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          source: 'packages/server'
-          target: '/usr/local/src/yourprojectname/backend-source'
-          strip_components: 2
-
-      - name: Deploy frontend dist
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: 'packages/client/frontend-dist'
-          target: '/usr/local/src/yourprojectname'
-          strip_components: 2
-
-      - name: Deploy docker-compose.yml
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: 'docker-compose.yml'
-          target: '/usr/local/src/yourprojectname/'
+          source: 'dist-package/*'
+          target: '/usr/local/src/oxygen-admin'
+          strip_components: 1
 
       - name: Execute remote commands
         uses: appleboy/ssh-action@v1.0.3
@@ -91,20 +76,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /usr/local/src/yourprojectname
-
-            # 部署前端
-            rm -rf frontend
-            mv frontend-dist frontend
-
-            # 安装后端依赖并启动应用
-            rm -rf backend
-            mv backend-source backend
-            rm -rf backend-source
-            cd backend
-            pnpm install
-            pnpm run build
-            cd ..
-            pm2 restart ecosystem.config.js
-
-            docker-compose up -d
+            cd /usr/local/src/oxygen-admin
+            rm -rf node_modules **/*/node_modules
+            pnpm install --prod
+            docker-compose --env-file=.env --env-file=.env.production up -d
+            pm2 delete oxygen-admin-backend && pm2 restart ecosystem.config.js
