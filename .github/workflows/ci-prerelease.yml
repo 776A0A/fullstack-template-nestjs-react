@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - prerelease
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.10.0]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build packages
+        run: pnpm -r run build
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: events-mcp-dist
+          path: |
+            packages/mcp-server/dist
+            packages/mcp-admin/dist
+            packages/chat-bot/dist
+            packages/mcp-server/nest-cli.json
+            packages/mcp-server/package.json
+            packages/shared
+            pnpm-lock.yaml
+            pnpm-workspace.yaml
+            package.json
+            docker-compose.yml
+            ecosystem.config.js
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: events-mcp-dist
+          path: dist-package
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: 'dist-package/*'
+          target: '/usr/local/src/events-mcp'
+          strip_components: 1
+
+      - name: Execute remote commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /usr/local/src/events-mcp
+            rm -rf node_modules **/*/node_modules
+            pnpm i
+            docker compose --env-file=.env --env-file=.env.production up -d
+            pm2 restart ecosystem.config.js --update-env

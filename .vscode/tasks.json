@@ -3,10 +3,10 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "start:client",
+			"script": "start:chat-bot",
 			"problemMatcher": [],
-			"label": "npm: start:client",
-			"detail": "pnpm -C ./packages/client dev"
+			"label": "npm: start:chat-bot",
+			"detail": "pnpm -C ./packages/chat-bot dev"
 		}
 	]
 }

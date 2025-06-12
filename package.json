@@ -1,31 +1,47 @@
 {
-  "name": "oxygen-admin",
+  "name": "events-mcp",
   "version": "1.0.0",
   "private": true,
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start:server": "docker compose up -d && pnpm -C ./packages/server start:debug",
-    "start:client": "pnpm -C ./packages/client dev",
+    "start:mcp-server": "docker compose up -d && pnpm -C ./packages/mcp-server start:debug",
+    "start:chat-bot": "pnpm -C ./packages/chat-bot dev",
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.12.1",
   "devDependencies": {
-    "@eslint/js": "^9.15.0",
-    "@types/lodash.size": "^4.2.9",
-    "@types/node": "^20.17.8",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "concurrently": "^9.1.0",
-    "eslint": "^9.15.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "globals": "^15.12.0",
-    "prettier": "^3.4.1",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.16.0"
+    "@eslint/js": "^9.28.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "@types/node": "20.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "@typescript-eslint/parser": "^8.34.0",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "globals": "^16.2.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.12",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "dependencies": {
-    "cross-env": "^7.0.3",
+    "axios": "^1.9.0",
     "dayjs": "^1.11.13",
-    "lodash.size": "^4.2.0"
+    "tailwindcss": "^4.1.10",
+    "unplugin-icons": "^22.1.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@swc/core"
+    ]
   }
 }
